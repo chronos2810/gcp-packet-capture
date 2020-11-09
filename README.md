@@ -99,7 +99,8 @@ gcloud beta compute instance-templates create instance-template \
    --tags=allow-ssh \
    --image=debian-9-stretch-v20201014 \
    --image-project=debian-cloud \
-   --boot-disk-size=10GB
+   --boot-disk-size=10GB \
+   --metadata="startup-script=sudo apt install apache2 -y"
 ```
 
 2. Create and configure the Managed Instance Group
@@ -119,4 +120,38 @@ gcloud beta compute instance-groups managed set-autoscaling "instance-group" \
   --mode "on"
 ```
 
+3. Internal TCP Load Balancer
+
+```bash
+# Create a new regional HTTP health check to test HTTP connectivity to the VMs on 80.
+gcloud compute health-checks create http hc-http-80 \
+    --region=us-central1 \
+    --port=80
+
+# Create the backend service for HTTP traffic:
+gcloud compute backend-services create be-ilb \
+    --load-balancing-scheme=internal \
+    --protocol=tcp \
+    --region=us-central1 \
+    --health-checks=hc-http-80 \
+    --health-checks-region=us-central1
+
+# Add the instance group to the backend service:
+gcloud compute backend-services add-backend be-ilb \
+    --region=us-central1 \
+    --instance-group=instance-group \
+    --instance-group-zone=us-central1-a
+
+# Create a forwarding rule for the backend service. When you create the forwarding rule, specify 10.1.2.99 for the internal IP address in the subnet.
+gcloud compute forwarding-rules create fr-ilb \
+    --region=us-central1 \
+    --load-balancing-scheme=internal \
+    --network=default \
+    --subnet=default \
+    --ip-protocol=TCP \
+    --ports=80 \
+    --backend-service=be-ilb \
+    --backend-service-region=us-central1 \
+    --is-mirroring-collector
+```
 
