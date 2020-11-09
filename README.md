@@ -176,6 +176,3 @@ gcloud compute packet-mirrorings create packet-mirroring-policy-00 \
 ### TODO
 
 - Terraform All
-- Internet Issue for "startup-script" in managed instances
-
-apt install dnsutils tcpdump
