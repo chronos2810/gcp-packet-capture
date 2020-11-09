@@ -2,16 +2,15 @@
 
 <!-- MarkdownTOC autolink=true -->
 
-- [TODO](#todo)
 - [Documentation](#documentation)
 - [Preparing GCP Environment](#preparing-gcp-environment)
 - [Packet Capture Prerequisites Setup](#packet-capture-prerequisites-setup)
+- [Creating the Mirroring Policy](#creating-the-mirroring-policy)
+    - [TODO](#todo)
 
 <!-- /MarkdownTOC -->
 
-### TODO
 
-- Terraform All
 
 ## Documentation
 
@@ -93,21 +92,21 @@ We are going to create the following resources
 gcloud beta compute instance-templates create instance-template \
    --machine-type=f1-micro \
    --network=default \
-   --no-address \
+   # --no-address \
    --no-restart-on-failure \
    --maintenance-policy=TERMINATE \
    --tags=allow-ssh \
    --image=debian-9-stretch-v20201014 \
    --image-project=debian-cloud \
    --boot-disk-size=10GB \
-   --metadata="startup-script=sudo apt install apache2 -y"
+   --metadata="startup-script=sudo apt update && sudo apt install apache2 dnsutils tcpdump -y"
 ```
 
 2. Create and configure the Managed Instance Group
 
 ```bash
 gcloud compute instance-groups managed create instance-group \
-  --base-instance-name=instance-group \
+  --base-instance-name=instance-group-vm \
   --template=instance-template \
   --size=1 \
   --zone=us-central1-a
@@ -127,6 +126,15 @@ gcloud beta compute instance-groups managed set-autoscaling "instance-group" \
 gcloud compute health-checks create http hc-http-80 \
     --region=us-central1 \
     --port=80
+
+# Create a new firewall rule for health checks
+gcloud compute firewall-rules create fw-allow-health-checks \
+    --network=default \
+    --action=ALLOW \
+    --direction=INGRESS \
+    --source-ranges=35.191.0.0/16,130.211.0.0/22 \
+    --target-tags=allow-ssh \
+    --rules=tcp
 
 # Create the backend service for HTTP traffic:
 gcloud compute backend-services create be-ilb \
@@ -155,3 +163,19 @@ gcloud compute forwarding-rules create fr-ilb \
     --is-mirroring-collector
 ```
 
+## Creating the Mirroring Policy
+
+```bash
+gcloud compute packet-mirrorings create packet-mirroring-policy-00 \
+  --region=us-central1 \
+  --network=default \
+  --collector-ilb=fr-ilb \
+  --mirrored-instances=projects/$PROJECT_ID/zones/us-central1-a/instances/vm-instance
+```
+
+### TODO
+
+- Terraform All
+- Internet Issue for "startup-script" in managed instances
+
+apt install dnsutils tcpdump
