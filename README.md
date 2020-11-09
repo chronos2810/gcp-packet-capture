@@ -142,13 +142,13 @@ gcloud compute backend-services add-backend be-ilb \
     --instance-group=instance-group \
     --instance-group-zone=us-central1-a
 
-# Create a forwarding rule for the backend service. When you create the forwarding rule, specify 10.1.2.99 for the internal IP address in the subnet.
+# Create a forwarding rule for the backend service.
 gcloud compute forwarding-rules create fr-ilb \
     --region=us-central1 \
     --load-balancing-scheme=internal \
     --network=default \
     --subnet=default \
-    --ip-protocol=TCP \
+    --ip-protocol=tcp \
     --ports=80 \
     --backend-service=be-ilb \
     --backend-service-region=us-central1 \
