@@ -83,9 +83,9 @@ gcloud compute firewall-rules describe local-to-vm
 
 We are going to create the following resources
 
-- One Instance Template
-- One Managed Instance Group from that template
-- One TCP Internal Load Balancer
+- Instance Template
+- Managed Instance Group from that template
+- TCP Internal Load Balancer
 
 1. Create an Instance Template for the Managed Instance Group
 
