@@ -6,11 +6,10 @@
 - [Preparing GCP Environment](#preparing-gcp-environment)
 - [Packet Capture Prerequisites Setup](#packet-capture-prerequisites-setup)
 - [Creating the Mirroring Policy](#creating-the-mirroring-policy)
+- [Testing](#testing)
     - [TODO](#todo)
 
 <!-- /MarkdownTOC -->
-
-
 
 ## Documentation
 
@@ -171,6 +170,14 @@ gcloud compute packet-mirrorings create packet-mirroring-policy-00 \
   --network=default \
   --collector-ilb=fr-ilb \
   --mirrored-instances=projects/$PROJECT_ID/zones/us-central1-a/instances/vm-instance
+```
+
+## Testing
+
+Generate some traffic on the "vm-instance" and capture it on one of the Instance groups machines with tcpdump 
+
+```bash
+tcpdump -i eth0 port not 22
 ```
 
 ### TODO
