@@ -7,6 +7,7 @@
 - [Packet Capture Prerequisites Setup](#packet-capture-prerequisites-setup)
 - [Creating the Mirroring Policy](#creating-the-mirroring-policy)
 - [Testing](#testing)
+- [CleanUP](#cleanup)
     - [TODO](#todo)
 
 <!-- /MarkdownTOC -->
@@ -178,6 +179,12 @@ Generate some traffic on the "vm-instance" and capture it on one of the Instance
 
 ```bash
 tcpdump -i eth0 port not 22
+```
+
+## CleanUP
+
+```bash
+
 ```
 
 ### TODO
