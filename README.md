@@ -8,7 +8,7 @@
 - [Creating the Mirroring Policy](#creating-the-mirroring-policy)
 - [Testing](#testing)
 - [CleanUP](#cleanup)
-    - [TODO](#todo)
+  - [TODO](#todo)
 
 <!-- /MarkdownTOC -->
 
@@ -184,7 +184,8 @@ tcpdump -i eth0 port not 22
 ## CleanUP
 
 ```bash
-
+cd ../project-creation
+terraform destroy
 ```
 
 ### TODO
